@@ -1,0 +1,31 @@
+.main {
+  font-family: 'Poppins';
+  width: 100%;
+
+  .content {
+    margin-top: 40px;
+
+    &__items {
+      
+    }
+  }
+}
+
+@import '../main/header';
+@import '../main/goods';
+
+
+
+
+  
+
+.button__choosed {
+   background-color: #6F4FF2 !important;
+}
+
+.card__hidenned{
+  display: none !important;
+}
+
+
+

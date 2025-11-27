@@ -1,0 +1,72 @@
+.basket {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  opacity: 0;
+  transform: scale(0.8) translateY(-20px);
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  visibility: hidden;
+
+  &__cards{
+    padding-top: rem(40);
+  }
+
+}
+
+.basket.active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+   z-index: 1001;
+}
+
+
+.goods__card__close{
+  padding: 5px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  align-self: self-end;
+  &-button{
+  border-radius: 50%;
+    img{width: 25px;}
+  }
+}
+
+
+
+@keyframes cardAppear {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+.basket__cards .goods__card {
+  opacity: 0;
+  transform: translateY(30px) scale(0.9);
+  animation: cardAppear 0.4s ease forwards;
+}
+
+$card-count: 7;
+$delay-step: 0.05s;
+
+
+.basket__cards {
+  @for $i from 1 through $card-count {
+    .goods__card:nth-child(#{$i}) {
+      animation-delay: $i * $delay-step;
+    }
+  }
+}
