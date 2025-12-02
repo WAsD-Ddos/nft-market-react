@@ -13,6 +13,9 @@ const GoodsCard = (props) => {
 
         onAddToCard,
     } = props;
+    
+
+ 
 
     return (
         <div className="goods__card" name={name} type_of={type_of}>

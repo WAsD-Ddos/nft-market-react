@@ -9,6 +9,7 @@ const Goods = (props) => {
         SetFilters,
         currentFilter,
         onAddToCard,
+        filteredItems,
     } = props;
     return (
         <section className="goods">
@@ -23,6 +24,8 @@ const Goods = (props) => {
                 <GoodsCardsList
                 // items={goodsItems}
                 onAddToCard = {onAddToCard}
+                filteredItems = {filteredItems}
+                currentFilter  ={currentFilter}
                 />
             </div>
         </section>

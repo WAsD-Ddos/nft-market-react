@@ -11,15 +11,17 @@ const Basket = memo((props) => {
     } = props
 
     return (
-        <section className={`basket ${isActive ? 'activeBasket' : ''}`}>
+        <section className={`basket ${isActive ? 'active' : ''}`}>
             <div className="container">
                 <BasketList
                     BasketTasks={BasketTasks}
-                    onDeleteBusketCard ={onDeleteBusketCard}
+                    onDeleteBusketCard={onDeleteBusketCard}
                 />
             </div>
         </section>
     )
 })
+
+Basket.displayName = 'Basket';
 
 export default Basket

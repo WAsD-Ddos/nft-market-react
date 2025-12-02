@@ -12,7 +12,7 @@ const SearchForm = (props) => {
     } = props;
 
     return (
-        <form className="search">
+        <form className="search" onSubmit={(e)=>{e.preventDefault()}}>
             <div className="search__field">
                 <button type="submit" className="search__button">
                     <img

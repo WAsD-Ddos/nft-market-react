@@ -21,4 +21,3 @@ const FilterButton = (props) => {
 };
 
 export default FilterButton;
-

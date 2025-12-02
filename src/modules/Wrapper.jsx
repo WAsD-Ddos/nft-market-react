@@ -1,11 +1,14 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { useMarket } from '../components/Context/MarketContext';
+import { useMemo, useCallback } from 'react';
 import Sidebar from './Sidebar';
 import Main from './Main';
 import Basket from './Basket';
+import { useBasket } from '../hooks/useBasket';
+import { useFilters } from '../hooks/useFilters';
+import { useSidebar } from '../hooks/useSidebar';
+import { useSearch } from '../hooks/useSearch';
+import { useMarketItems } from '../hooks/useMarketItems';
 
-
-
+// Константы фильтров
 const FILTERS = [
   {
     value: "all",
@@ -24,133 +27,80 @@ const FILTERS = [
   }
 ];
 
-
-const BASKETLOCALKEY = 'BasketLocal';
-
+/**
+ * Главный компонент-обертка приложения
+ * Управляет состоянием корзины, фильтров, сайдбара и поиска
+ */
 function Wrapper() {
+  // Хуки для управления состоянием
+  const { goodItems, findItemByName } = useMarketItems();
+  const {
+    basket,
+    basketActive,
+    addToBasket,
+    deleteFromBasket,
+    toggleBasket,
+  } = useBasket();
+  
+  const {
+    filters,
+    filteredItems,
+    updateFilters,
+  } = useFilters(goodItems);
+  
+  const {
+    sidebarActive,
+    toggleSidebar,
+  } = useSidebar(false);
+  
+  const {
+    queryPlaceholder,
+    setQueryPlaceholder,
+    showTypingPlaceholder,
+  } = useSearch();
 
-  const { goodItems } = useMarket();
-  const [sidebarActive, setSidebarActive] = useState(true);
-  const [filters, SetFilters] = useState({ query: '', filter: 'all' })
-  const [queryPlaceHolder, setQueryPlaceHolder] = useState('Search here')
-  const [basketActive, setBasketActive] = useState(false);
-
-  const [basket, setBasket] = useState(() => {
-    const savedBasket = localStorage.getItem(BASKETLOCALKEY);
-    if (savedBasket) {
-      return JSON.parse(savedBasket);
-    }
-    return []
-  }
-  )
-
-  let typingInterval;
-
-
-
-
-
-  const showQueryPlaceHolder = () => {
-    const fullText = 'Search here';
-    let currentText = '';
-    let index = 0;
-
-    clearInterval(typingInterval);
-
-    typingInterval = setInterval(() => {
-      if (index < fullText.length) {
-        currentText += fullText[index];
-        setQueryPlaceHolder(currentText)
-        index++;
-      } else {
-        clearInterval(typingInterval);
-      }
-    }, 100);
-  }
-
-
-
-
-
-
-
-  const SidebarHanndleClose = useCallback(() => {
-    setSidebarActive(!sidebarActive);
-  }, [sidebarActive]
-  )
-
-  const OnSetBasketActive = useCallback(() => {
-    setBasketActive(!basketActive);
-  }, [basketActive]
-  )
-
-
-
-
-
-    const onDeleteBusketCard = (key) => {
-        SetBasketTasks(prev => prev.filter(item => item.key !== key));
-    }
-
-
-
-  const onAddToCard = useCallback((name) => {
-    console.log('adding to basket')
-    const foundItem = goodItems.find(item => item.name === name);
-
+  // Обработчик добавления товара в корзину
+  const handleAddToCard = useCallback((name) => {
+    const foundItem = findItemByName(name);
     if (foundItem) {
-      const ItemToBasket = {
-        key: foundItem.name + Date.now(),
-        name: foundItem.name,
-        type_of: foundItem.type_of,
-        imageSrc: foundItem.imageSrc,
-        title: foundItem.title,
-        auctionTime: foundItem.auctionTime,
-        currentBid: foundItem.currentBid
-      };
-
-
-      setBasket(prev => {
-        const newBasket = [...prev, ItemToBasket];
-        localStorage.setItem(BASKETLOCALKEY, JSON.stringify(newBasket));
-        return newBasket;
-      });
+      const added = addToBasket(foundItem);
+      if (!added) {
+        console.log('Item already in basket:', name);
+      }
     }
-  }, [goodItems])
+  }, [findItemByName, addToBasket]);
 
+  // Обработчик удаления из корзины
+  const handleDeleteFromBasket = useCallback((title) => {
+    deleteFromBasket(title);
+  }, [deleteFromBasket]);
 
   return (
     <div className="wrapper">
-
-
       <Basket
         BasketTasks={basket}
-        onDeleteBusketCard = {onDeleteBusketCard}
+        onDeleteBusketCard={handleDeleteFromBasket}
         isActive={basketActive}
       />
 
-
-
       <Sidebar
         sidebarActive={sidebarActive}
-        SidebarHanndleClose={SidebarHanndleClose}
+        SidebarHanndleClose={toggleSidebar}
       />
 
       <Main
         filters={FILTERS}
         title="Trending Bids"
-        SidebarHanndleClose={SidebarHanndleClose}
-        queryPlaceHolder={queryPlaceHolder}
-        showQueryPlaceHolder={showQueryPlaceHolder}
-        setQueryPlaceHolder={setQueryPlaceHolder}
-        SetFilters={SetFilters}
+        SidebarHanndleClose={toggleSidebar}
+        queryPlaceHolder={queryPlaceholder}
+        showQueryPlaceHolder={showTypingPlaceholder}
+        setQueryPlaceHolder={setQueryPlaceholder}
+        SetFilters={updateFilters}
         currentFilter={filters}
-
-        OnSetBasketActive={OnSetBasketActive}
-
-        onAddToCard={onAddToCard}
+        OnSetBasketActive={toggleBasket}
+        onAddToCard={handleAddToCard}
+        filteredItems={filteredItems}
       />
-
     </div>
   );
 }

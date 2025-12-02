@@ -20,6 +20,8 @@ const Main = (props) => {
         OnSetBasketActive,
 
         onAddToCard,
+
+        filteredItems,
     } = props
 
 
@@ -44,6 +46,7 @@ const Main = (props) => {
                     SetFilters={SetFilters}
                     title={title}
                     onAddToCard ={onAddToCard}
+                    filteredItems ={filteredItems}
                 />
 
             </div>

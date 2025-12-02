@@ -2,11 +2,10 @@ import Button from "../ExtraElements/Button";
 
 const BasketCard = (props) => {
     const {
-        iconSrs,
+        iconSrc,
         title,
         onDelete,
     } = props;
-
 
 
 
@@ -16,14 +15,14 @@ const BasketCard = (props) => {
             <div className="goods__card__close">
 
                 <Button 
-                  iconSrc ='/img/close__delete.png'
+                  iconSrc ='/close__delete.png'
                   alt = 'delete-basket-card'
-                  onClick = {onDelete}
+                  onClick = {() => (onDelete(title))}
                   buttonClassName ='goods__card__close-button'
                 />
             </div>
             <div className="goods__card__img">
-                <img src={iconSrs || ''} alt="" />
+                <img src={iconSrc} alt="" />
             </div>
             <div className="goods__card__title">
                 {title} 
